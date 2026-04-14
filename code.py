@@ -1,3 +1,10 @@
+'''
+Taka prośba, nie edytujcie funkcji związanych z przeszukiwaniem rozwiązań. 
+Janek -> napisz funkcje testowe, np takie, że wygeneruje 1,10,20,50,100,1000 przedmiotów i 
+będzię je alokować wykorzystując algorytm, funkcja powinna w jakiś spobób mierzyć czas. W jakiś inny sposób
+będziesz musiał obliczyć zajmowane zasoby.
+'''
+
 import random
 low_item_value = 1
 max_item_value = 9
@@ -5,6 +12,8 @@ box_capacity = 10
 '''
 Returns k items which value is: low < value < max
 '''
+
+
 def generate_items(k):
     items = []
     i = 0
