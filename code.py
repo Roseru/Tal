@@ -1,10 +1,3 @@
-'''
-Taka prośba, nie edytujcie funkcji związanych z przeszukiwaniem rozwiązań.
-Janek -> napisz funkcje testowe, np. takie, że wygeneruje 1,10,20,50,100,1000 przedmiotów i
-będzie, je alokować wykorzystując algorytm, funkcja powinna w jakiś sposób mierzyć czas. W jakiś inny sposób
-będziesz musiał obliczyć zajmowane zasoby.
-'''
-
 import random
 import time
 import tracemalloc
@@ -110,12 +103,12 @@ def measure_algorithm(algorithm, items):
 
 def run_performance_tests():
     # Zestaw danych do testów
-    test_sizes = [1, 5, 10, 12, 14, 16, 18, 20, 50, 100, 1000]
-    branch_and_bound_limit = 16
+    test_sizes = [1, 5, 10, 11, 12, 13, 14, 15, 16, 17, 18, 20, 50, 100, 1000]
+    branch_and_bound_limit = 17
 
     header = (
-        f"{'N':<6} | {'Czas FFD (s)':<15} | {'Pamięć FFD (KiB)':<18} | "
-        f"{'Pudełka FFD':<12} | {'Czas B&B (s)':<15} | {'Pamięć B&B (KiB)':<18} | {'Pudełka B&B':<12}"
+        f"{'N':<6} | {'Czas FFD (s)':<15} | {'Czas B&B (s)':<15} | "
+        f"{'Pamięć FFD (KiB)':<18} | {'Pamięć B&B (KiB)':<18} | {'Pudełka FFD':<12} | {'Pudełka B&B':<12}"
     )
     print(header)
     print("-" * len(header))
@@ -137,8 +130,8 @@ def run_performance_tests():
             bnb_boxes = "-"
 
         print(
-            f"{n:<6} | {ffd_result['time']:<15.6f} | {ffd_result['peak_memory']:<18.2f} | "
-            f"{ffd_result['box_count']:<12} | {bnb_time:<15} | {bnb_memory:<18} | {bnb_boxes:<12}"
+            f"{n:<6} | {ffd_result['time']:<15.6f} | {bnb_time:<15} | "
+            f"{ffd_result['peak_memory']:<18.2f} | {bnb_memory:<18} | {ffd_result['box_count']:<12} | {bnb_boxes:<12}"
         )
 
 # WYKONANIE
