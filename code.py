@@ -7,6 +7,7 @@ będziesz musiał obliczyć zajmowane zasoby.
 
 import random
 import time
+import tracemalloc
 '''Parametry generatora przedmiotów'''
 low_item_value = 1
 max_item_value = 9
@@ -90,34 +91,55 @@ def first_fit_decreasing(items):
     return box_sums, box_contents
 
 
+def measure_algorithm(algorithm, items):
+    tracemalloc.start()
+    start_time = time.perf_counter()
+    box_sums, box_contents = algorithm(items)
+    end_time = time.perf_counter()
+    _current_memory, peak_memory = tracemalloc.get_traced_memory()
+    tracemalloc.stop()
+
+    return {
+        "time": end_time - start_time,
+        "peak_memory": peak_memory / 1024,
+        "box_count": len(box_contents),
+        "box_sums": box_sums,
+        "box_contents": box_contents,
+    }
+
+
 def run_performance_tests():
     # Zestaw danych do testów
-    test_sizes = [1, 10, 15,16,17,18,19, 20, 50, 100, 1000]
+    test_sizes = [1, 5, 10, 12, 14, 16, 18, 20, 50, 100, 1000]
+    branch_and_bound_limit = 16
 
-    print(f"{'N':<5} | {'Czas FFD (s)':<15} | {'Czas BF (s)':<18} | {'Pudełka FFD':<15} | {'Pudełka BF':<15}")
-    print("-" * 80)
+    header = (
+        f"{'N':<6} | {'Czas FFD (s)':<15} | {'Pamięć FFD (KiB)':<18} | "
+        f"{'Pudełka FFD':<12} | {'Czas B&B (s)':<15} | {'Pamięć B&B (KiB)':<18} | {'Pudełka B&B':<12}"
+    )
+    print(header)
+    print("-" * len(header))
 
     for n in test_sizes:
         items = generate_items(n)
 
-        # --- TEST FFD ---
-        start_ffd = time.perf_counter()
-        sums_ffd, bins_ffd = first_fit_decreasing(items)
-        end_ffd = time.perf_counter()
-        time_ffd = end_ffd - start_ffd
+        ffd_result = measure_algorithm(first_fit_decreasing, items)
 
-        # --- TEST BRUTE FORCE ---
-        if n <= 18:  # BEZPIECZNIK - Brute force, żeby nie czekać godzin na koniec programu
-            start_bf = time.perf_counter()
-            sums_bf, bins_bf = branch_and_bound(items)
-            end_bf = time.perf_counter()
-            time_bf = f"{end_bf - start_bf:.6f}"
-            res_bf = str(len(bins_bf))
+        # Branch&Bound ma złożoność wykładniczą, więc większe testy są celowo pomijane.
+        if n <= branch_and_bound_limit:
+            bnb_result = measure_algorithm(branch_and_bound, items)
+            bnb_time = f"{bnb_result['time']:.6f}"
+            bnb_memory = f"{bnb_result['peak_memory']:.2f}"
+            bnb_boxes = str(bnb_result["box_count"])
         else:
-            time_bf = "Pominięto (NP-trudny)"
-            res_bf = "-"
+            bnb_time = "Pominięto"
+            bnb_memory = "-"
+            bnb_boxes = "-"
 
-        print(f"{n:<5} | {time_ffd:<15.6f} | {time_bf:<18} | {len(bins_ffd):<15} | {res_bf:<15}")
+        print(
+            f"{n:<6} | {ffd_result['time']:<15.6f} | {ffd_result['peak_memory']:<18.2f} | "
+            f"{ffd_result['box_count']:<12} | {bnb_time:<15} | {bnb_memory:<18} | {bnb_boxes:<12}"
+        )
 
 # WYKONANIE
 if __name__ == "__main__":
